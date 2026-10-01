@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: pytest tests/ -q
+      - run: python src/generate_data.py
+      - run: python src/validate.py
+      - run: python src/prepare_features.py
+      - name: feast apply
+        working-directory: feature_repo
+        run: feast apply
+      - run: python src/train.py
+      - run: python src/monitor.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: monitoring-report
+          path: reports/monitoring_report.html

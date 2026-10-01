@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+data/raw/
+feature_repo/data/
+mlruns/
+mlflow.db
+reports/*.html
+.env
+*.log
+.DS_Store
